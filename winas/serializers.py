@@ -139,8 +139,13 @@ class CEO_RegisterSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         validated_data.pop('password2')
+        # Generate username from email if not provided
+        email = validated_data['email']
+        username = email.split('@')[0]  # Use part before @ as username
+        
         user = User.objects.create_user(
             email=validated_data['email'],
+            username=username,  # Add username field
             password=validated_data['password'],
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
@@ -195,8 +200,13 @@ class SupervisorCreationSerializer(serializers.ModelSerializer):
         temp_password = get_random_string(length=12)
         validated_data['password'] = temp_password # Store for sending to supervisor
 
+        # Generate username from email if not provided
+        email = validated_data['email']
+        username = email.split('@')[0]  # Use part before @ as username
+        
         user = User.objects.create_user(
             email=validated_data['email'],
+            username=username,  # Add username field
             password=temp_password,
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
@@ -239,9 +249,14 @@ class EmployeeCreationSerializer(serializers.ModelSerializer):
         temp_password = get_random_string(length=12)
         validated_data['password'] = temp_password # Store for sending to employee
 
+        # Generate username from email if not provided
+        email = validated_data['email']
+        username = email.split('@')[0]  # Use part before @ as username
+        
         # The department and role will be set in the view based on the requesting supervisor
         user = User.objects.create_user(
             email=validated_data['email'],
+            username=username,  # Add username field
             password=temp_password,
             first_name=validated_data.get('first_name'),
             last_name=validated_data.get('last_name'),
