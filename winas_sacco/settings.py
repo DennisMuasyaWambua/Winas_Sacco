@@ -48,6 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    "corsheaders.middleware.CorsMiddleware",  # Add CORS middleware
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -92,6 +93,9 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+CORS_ALLOWED_ORIGINS=[
+    "https://performancemanagement.netlify.app/",
+]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication', # Use JWT for authentication
