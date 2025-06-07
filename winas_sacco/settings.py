@@ -167,6 +167,15 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+# Email Configuration
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'  # Update with your SMTP server
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+EMAIL_HOST_USER = 'muasyathegreat4@gmail.com'  # Update with your email
+EMAIL_HOST_PASSWORD = os.environ.get('MAIL_PASSWORD')  # Update with your password or app password
+DEFAULT_FROM_EMAIL = 'WinasSacco <noreply@winassacco.com>'
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 

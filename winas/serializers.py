@@ -6,6 +6,7 @@ from django.core.exceptions import ValidationError as DjangoValidationError
 from django.db import transaction
 from django.utils.crypto import get_random_string
 from django.conf import settings
+from .utils import send_password_email
 
 from .models import (
     Department, Role, User, Pillar, KeyResultArea, PerformanceTarget,
@@ -220,11 +221,18 @@ class SupervisorCreationSerializer(serializers.ModelSerializer):
         user.role = supervisor_role
         user.save()
 
-        # In a real application, you would send an email with temp_password to validated_data['email']
+        # Send email with temporary password
+        email_sent = send_password_email(
+            user_email=user.email,
+            password=temp_password,
+            first_name=user.first_name,
+            last_name=user.last_name
+        )
+
         print(f"--- Supervisor Account Created ---")
         print(f"Email: {user.email}")
         print(f"Temporary Password: {temp_password}")
-        print(f"Please instruct supervisor to reset password upon first login.")
+        print(f"Email sent: {'Yes' if email_sent else 'No'}")
         print(f"----------------------------------")
 
         return user
@@ -268,11 +276,18 @@ class EmployeeCreationSerializer(serializers.ModelSerializer):
         user.role = employee_role
         user.save()
 
-        # In a real application, you would send an email with temp_password to validated_data['email']
+        # Send email with temporary password
+        email_sent = send_password_email(
+            user_email=user.email,
+            password=temp_password,
+            first_name=user.first_name,
+            last_name=user.last_name
+        )
+
         print(f"--- Employee Account Created ---")
         print(f"Email: {user.email}")
         print(f"Temporary Password: {temp_password}")
-        print(f"Please instruct employee to reset password upon first login.")
+        print(f"Email sent: {'Yes' if email_sent else 'No'}")
         print(f"----------------------------------")
 
         return user
