@@ -106,9 +106,7 @@ class User(AbstractUser): # Extending AbstractUser for authentication features
         blank=True,
         help_text="Corresponds to PF.NO in the appraisal tool."
     )
-    annual_salary = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
+    annual_salary = models.IntegerField(
         null=True,
         blank=True,
         help_text="Employee's annual salary for bonus calculation."
@@ -181,23 +179,17 @@ class PerformanceTarget(models.Model):
     target_description = models.TextField(
         help_text="The specific target description (e.g., 'Recruit 40 new members')."
     )
-    target_value = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
+    target_value = models.IntegerField(
         null=True,
         blank=True,
         help_text="The numerical target figure (e.g., 40, 80000000)."
     )
-    annual_target = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
+    annual_target = models.IntegerField(
         null=True,
         blank=True,
         help_text="The annual target, which might differ from the primary target_value."
     )
-    weight = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    weight = models.IntegerField(
         help_text="The weight assigned to this target."
     )
 
@@ -227,16 +219,12 @@ class EmployeePerformance(models.Model):
     # Using CharField for period for flexibility (e.g., "Jan-Jun 2024").
     # For more complex period tracking, consider a separate `AppraisalPeriod` model.
     period_under_review = models.CharField(max_length=100)
-    actual_achievement = models.DecimalField(
-        max_digits=15,
-        decimal_places=2,
+    actual_achievement = models.IntegerField(
         help_text="The actual value achieved by the employee."
     )
     # These can be properties or calculated on save if preferred,
     # but storing them can optimize reads for reporting.
-    percentage_achieved = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    percentage_achieved = models.IntegerField(
         null=True,
         blank=True,
         help_text="Calculated: Actual Achievement / Target Value."
@@ -246,9 +234,7 @@ class EmployeePerformance(models.Model):
         blank=True,
         help_text="The rating given for the achievement (e.g., 60, 100)."
     )
-    weighted_average = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    weighted_average = models.IntegerField(
         null=True,
         blank=True,
         help_text="Calculated: Percentage Achieved * Weight."
@@ -300,14 +286,10 @@ class SoftSkillRating(models.Model):
     rating = models.IntegerField(
         help_text="The score given for the soft skill (e.g., 80, 70)."
     )
-    weight = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    weight = models.IntegerField(
         help_text="The weight of the soft skill."
     )
-    weighted_average = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    weighted_average = models.IntegerField(
         null=True,
         blank=True,
         help_text="Calculated: Rating * Weight (assuming rating is scaled, e.g., out of 100)."
@@ -344,19 +326,13 @@ class OverallAppraisal(models.Model):
         help_text="The employee being appraised."
     )
     period_under_review = models.CharField(max_length=100)
-    strategic_objectives_score = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    strategic_objectives_score = models.IntegerField(
         help_text="Total score for Strategic Objectives (e.g., Section B)."
     )
-    soft_skills_score = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    soft_skills_score = models.IntegerField(
         help_text="Total score for Soft Skills (e.g., Section C)."
     )
-    total_performance_rating = models.DecimalField(
-        max_digits=5,
-        decimal_places=2,
+    total_performance_rating = models.IntegerField(
         null=True,
         blank=True,
         help_text="Combined score (Strategic Objectives + Soft Skills)."
