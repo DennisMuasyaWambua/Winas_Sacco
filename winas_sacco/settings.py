@@ -95,6 +95,7 @@ DATABASES = {
 }
 CORS_ALLOWED_ORIGINS=[
     "https://performancemanagement.netlify.app",
+    "http://localhost:5173/"
 ]
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
