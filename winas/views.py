@@ -353,6 +353,17 @@ class PillarDetail(RetrieveUpdateDestroyAPIView):
     queryset = Pillar.objects.all()
     serializer_class = PillarSerializer
     permission_classes = [IsSupervisorOrAdmin]
+    
+    def delete(self, request, pk, *args, **kwargs):
+        try:
+            obj = self.get_object(pk)
+            # First delete all related KeyResultAreas (this should cascade to PerformanceTargets)
+            KeyResultArea.objects.filter(pillar=obj).delete()
+            # Now delete the Pillar
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class KeyResultAreaListCreate(ListCreateAPIView):
     queryset = KeyResultArea.objects.all().select_related('pillar')
