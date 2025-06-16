@@ -384,6 +384,17 @@ class PerformanceTargetDetail(RetrieveUpdateDestroyAPIView):
     queryset = PerformanceTarget.objects.all().select_related('kra__pillar')
     serializer_class = PerformanceTargetSerializer
     permission_classes = [IsSupervisorOrAdmin]
+    
+    def delete(self, request, pk, *args, **kwargs):
+        obj = self.get_object(pk)
+        # Check if there are any EmployeePerformance records referencing this target
+        if obj.employee_performances.exists():
+            return Response(
+                {"error": "Cannot delete this Performance Target because it is referenced by Employee Performance records. Delete those records first or update them to use a different target."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        obj.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class EmployeePerformanceListCreate(ListCreateAPIView):
