@@ -147,7 +147,7 @@ class KeyResultArea(models.Model):
     # kra_id is automatically created as 'id' by Django's AutoField
     pillar = models.ForeignKey(
         Pillar,
-        on_delete=models.PROTECT, # Changed from CASCADE to PROTECT to prevent deletion of pillar if KRAs exist
+        on_delete=models.CASCADE, # Changed to CASCADE to allow pillar deletion to cascade to KRAs
         related_name='kras'
     )
     kra_name = models.CharField(max_length=255)
@@ -173,7 +173,7 @@ class PerformanceTarget(models.Model):
     # target_id is automatically created as 'id' by Django's AutoField
     kra = models.ForeignKey(
         KeyResultArea,
-        on_delete=models.PROTECT, # Changed from CASCADE to PROTECT to prevent deletion of KRA if targets exist
+        on_delete=models.CASCADE, # Changed to CASCADE to allow KRA deletion to cascade to KPIs
         related_name='performance_targets'
     )
     target_description = models.TextField(

@@ -357,13 +357,7 @@ class PillarDetail(RetrieveUpdateDestroyAPIView):
     def delete(self, request, pk, *args, **kwargs):
         try:
             obj = self.get_object(pk)
-            # Check if this pillar has any KRAs
-            if obj.kras.exists():
-                return Response(
-                    {"error": "Cannot delete this Pillar because it has associated Key Result Areas. Delete those KRAs first or reassign them to a different Pillar."},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            # Now delete the Pillar
+            # Delete the Pillar which will cascade to delete associated KRAs and KPIs (PerformanceTargets)
             obj.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
         except Exception as e:
@@ -381,12 +375,7 @@ class KeyResultAreaDetail(RetrieveUpdateDestroyAPIView):
     
     def delete(self, request, pk, *args, **kwargs):
         obj = self.get_object(pk)
-        # Check if there are any PerformanceTarget records referencing this KRA
-        if obj.performance_targets.exists():
-            return Response(
-                {"error": "Cannot delete this Key Result Area because it has associated Performance Targets (KPIs). Delete those Performance Targets first."},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        # Delete the KRA which will cascade to delete associated KPIs (PerformanceTargets)
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
@@ -408,6 +397,7 @@ class PerformanceTargetDetail(RetrieveUpdateDestroyAPIView):
                 {"error": "Cannot delete this Performance Target because it is referenced by Employee Performance records. Delete those records first or update them to use a different target."},
                 status=status.HTTP_400_BAD_REQUEST
             )
+        # Delete the KPI without affecting its parent KRA or Pillar
         obj.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
