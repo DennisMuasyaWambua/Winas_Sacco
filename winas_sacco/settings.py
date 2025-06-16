@@ -109,7 +109,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
-# JWT Settings
+# JWT Settings;
+
 from datetime import timedelta
 
 SIMPLE_JWT = {
