@@ -95,6 +95,7 @@ DATABASES = {
 }
 CORS_ALLOWED_ORIGINS=[
     "https://performancemanagement.netlify.app",
+    "https://bonus1system.netlify.app/",
     "http://localhost:5173"
 ]
 REST_FRAMEWORK = {
