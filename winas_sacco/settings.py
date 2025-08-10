@@ -97,6 +97,7 @@ CORS_ALLOWED_ORIGINS=[
     "https://performancemanagement.netlify.app",
     "https://bonus1system.netlify.app",
     "http://localhost:5173",
+    "https://performancemanagement.netlify.app",
     "https://performancemanagement.netlify.app"
 ]
 REST_FRAMEWORK = {
