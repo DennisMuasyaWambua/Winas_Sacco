@@ -93,6 +93,14 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
+CORS_ALLOW_METHODS = [
+    'DELETE',
+    'GET',
+    'OPTIONS',
+    'PATCH',
+    'POST',
+    'PUT',
+]
 
 # CORS Configuration
 CORS_ALLOWED_ORIGINS=[
@@ -102,8 +110,6 @@ CORS_ALLOWED_ORIGINS=[
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_HEADERS = True
-CORS_ALLOW_ALL_METHODS = True
 
 # Alternative fallback - try this if above doesn't work
 CORS_ALLOWED_HEADERS = [
@@ -126,6 +132,7 @@ CSRF_TRUSTED_ORIGINS = [
     "https://bonus1system.netlify.app",
     "http://localhost:5173",
     "https://read-and-write.example.com",
+    "https://winassacco-production.up.railway.app", 
 ]
 
 
