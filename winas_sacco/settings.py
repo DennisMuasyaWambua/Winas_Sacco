@@ -48,7 +48,7 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    "corsheaders.middleware.CorsMiddleware",  # Add CORS middleware
+    "corsheaders.middleware.CorsMiddleware",  
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -93,35 +93,14 @@ DATABASES = {
         conn_health_checks=True,
     )
 }
-CORS_ALLOW_ALL_ORIGINS = True
-# CORS_ALLOWED_ORIGINS=[
-#     "https://performancemanagement.netlify.app",
-#     "https://bonus1system.netlify.app",
-#     "http://localhost:5173",
-# ]
 
-# Additional CORS settings
-CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOWED_HEADERS = [
-    'accept',
-    'accept-encoding',
-    'authorization',
-    'content-type',
-    'dnt',
-    'origin',
-    'user-agent',
-    'x-csrftoken',
-    'x-requested-with',
-    'x-dev-request-id',
+CORS_ALLOWED_ORIGINS=[
+    "https://performancemanagement.netlify.app",
+    "https://bonus1system.netlify.app",
+    "http://localhost:5173",
 ]
-CORS_ALLOWED_METHODS = [
-    'DELETE',
-    'GET',
-    'OPTIONS',
-    'PATCH',
-    'POST',
-    'PUT',
-]
+
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication', # Use JWT for authentication
