@@ -99,12 +99,18 @@ CORS_ALLOWED_ORIGINS=[
     "https://bonus1system.netlify.app",
     "http://localhost:5173",
 ]
+CSRF_TRUSTED_ORIGINS = [
+    "https://performancemanagement.netlify.app",
+    "https://bonus1system.netlify.app",
+    "http://localhost:5173",
+    "https://read-and-write.example.com",
+]
 
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         'rest_framework_simplejwt.authentication.JWTAuthentication', # Use JWT for authentication
-        # 'rest_framework.authentication.SessionAuthentication', # Keep if you still want session auth (e.g., for browsable API)
+       
     ],
     'DEFAULT_PERMISSION_CLASSES': [
         'rest_framework.permissions.IsAuthenticated', # Default to authenticated access
