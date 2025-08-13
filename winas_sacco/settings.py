@@ -124,6 +124,7 @@ CORS_ALLOWED_HEADERS = [
     'x-requested-with',
     'x-dev-request-id',
     'x-dev-source',
+    'x-dev-timestamp',
     'cache-control',
     'pragma',
 ]
