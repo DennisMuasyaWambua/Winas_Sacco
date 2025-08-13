@@ -123,6 +123,7 @@ CORS_ALLOWED_HEADERS = [
     'x-csrftoken',
     'x-requested-with',
     'x-dev-request-id',
+    'x-dev-source',
     'cache-control',
     'pragma',
 ]
