@@ -106,7 +106,9 @@ class User(AbstractUser): # Extending AbstractUser for authentication features
         blank=True,
         help_text="Corresponds to PF.NO in the appraisal tool."
     )
-    annual_salary = models.IntegerField(
+    annual_salary = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
         null=True,
         blank=True,
         help_text="Employee's annual salary for bonus calculation."
