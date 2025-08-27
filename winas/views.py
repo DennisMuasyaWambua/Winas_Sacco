@@ -650,8 +650,8 @@ class BonusCalculationAPIView(APIView):
                     "SHARED PERFORMANCE AREAS", "ICT & BUSINESS PROCESSES"
                 ]
             )
-            total_strategic_weight = employee_performances.aggregate(sum_weight=Sum('performance_target__weight'))['sum_weight'] or Decimal('0.00')
-            total_strategic_weighted_average = employee_performances.aggregate(sum_w_avg=Sum('weighted_average'))['sum_w_avg'] or Decimal('0.00')
+            total_strategic_weight = Decimal(str(employee_performances.aggregate(sum_weight=Sum('performance_target__weight'))['sum_weight'] or 0))
+            total_strategic_weighted_average = Decimal(str(employee_performances.aggregate(sum_w_avg=Sum('weighted_average'))['sum_w_avg'] or 0))
 
             strategic_score = Decimal('0.00')
             if total_strategic_weight > Decimal('0.00'):
@@ -663,8 +663,8 @@ class BonusCalculationAPIView(APIView):
                 period_under_review=period_under_review,
                 soft_skill_kra__pillar__pillar_name="SOFT SKILLS"
             )
-            total_soft_skill_weight = soft_skill_ratings.aggregate(sum_weight=Sum('weight'))['sum_weight'] or Decimal('0.00')
-            total_soft_skill_weighted_average = soft_skill_ratings.aggregate(sum_w_avg=Sum('weighted_average'))['sum_w_avg'] or Decimal('0.00')
+            total_soft_skill_weight = Decimal(str(soft_skill_ratings.aggregate(sum_weight=Sum('weight'))['sum_weight'] or 0))
+            total_soft_skill_weighted_average = Decimal(str(soft_skill_ratings.aggregate(sum_w_avg=Sum('weighted_average'))['sum_w_avg'] or 0))
 
             soft_skill_score = Decimal('0.00')
             if total_soft_skill_weight > Decimal('0.00'):
