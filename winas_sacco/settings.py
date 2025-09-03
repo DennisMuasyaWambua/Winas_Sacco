@@ -111,26 +111,22 @@ CORS_ALLOWED_ORIGINS=[
 
 CORS_ALLOW_CREDENTIALS = True
 
-# Allow all headers temporarily to debug CORS issue
-CORS_ALLOW_ALL_HEADERS = True
-
-# Previous specific headers configuration (commented out for debugging)
-# CORS_ALLOWED_HEADERS = [
-#     'accept',
-#     'accept-encoding', 
-#     'authorization',
-#     'content-type',
-#     'dnt',
-#     'origin',
-#     'user-agent',
-#     'x-csrftoken',
-#     'x-requested-with',
-#     'x-dev-request-id',
-#     'x-dev-source',
-#     'x-dev-timestamp',
-#     'cache-control',
-#     'pragma',
-# ]
+CORS_ALLOWED_HEADERS = [
+    'accept',
+    'accept-encoding', 
+    'authorization',
+    'content-type',
+    'dnt',
+    'origin',
+    'user-agent',
+    'x-csrftoken',
+    'x-requested-with',
+    'x-dev-request-id',
+    'x-dev-source',
+    'x-dev-timestamp',
+    'cache-control',
+    'pragma',
+]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://performancemanagement.netlify.app",
