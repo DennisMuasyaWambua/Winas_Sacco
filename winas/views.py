@@ -380,12 +380,12 @@ class KeyResultAreaDetail(RetrieveUpdateDestroyAPIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 class PerformanceTargetListCreate(ListCreateAPIView):
-    queryset = PerformanceTarget.objects.all().select_related('kra__pillar')
+    queryset = PerformanceTarget.objects.all()
     serializer_class = PerformanceTargetSerializer
     permission_classes = [IsSupervisorOrAdmin]
 
 class PerformanceTargetDetail(RetrieveUpdateDestroyAPIView):
-    queryset = PerformanceTarget.objects.all().select_related('kra__pillar')
+    queryset = PerformanceTarget.objects.all()
     serializer_class = PerformanceTargetSerializer
     permission_classes = [IsSupervisorOrAdmin]
     
