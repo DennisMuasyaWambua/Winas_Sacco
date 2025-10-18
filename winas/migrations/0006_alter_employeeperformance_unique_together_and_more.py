@@ -11,10 +11,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterUniqueTogether(
-            name='employeeperformance',
-            unique_together={('user', 'kra', 'period_under_review')},
-        ),
         migrations.RemoveField(
             model_name='performancetarget',
             name='kra',
@@ -23,6 +19,10 @@ class Migration(migrations.Migration):
             model_name='employeeperformance',
             name='kra',
             field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.PROTECT, related_name='employee_performances', to='winas.keyresultarea'),
+        ),
+        migrations.AlterUniqueTogether(
+            name='employeeperformance',
+            unique_together={('user', 'kra', 'period_under_review')},
         ),
         migrations.AddField(
             model_name='pillar',
