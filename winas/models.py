@@ -133,13 +133,21 @@ class Pillar(models.Model):
     Defines the broad categories of performance (e.g., Shared Performance Areas, Soft Skills).
     """
     # pillar_id is automatically created as 'id' by Django's AutoField
-    pillar_name = models.CharField(max_length=255, unique=True)
+    performance_target = models.ForeignKey(
+        'PerformanceTarget',
+        on_delete=models.CASCADE,
+        related_name='pillars',
+        null=True,
+        blank=True
+    )
+    pillar_name = models.CharField(max_length=255)
 
     class Meta:
         verbose_name_plural = "Pillars"
+        unique_together = ('performance_target', 'pillar_name')
 
     def __str__(self):
-        return self.pillar_name
+        return f"{self.pillar_name} ({self.performance_target})"
 
 
 class KeyResultArea(models.Model):
@@ -170,14 +178,9 @@ class KeyResultArea(models.Model):
 
 class PerformanceTarget(models.Model):
     """
-    Defines the general targets for each Key Result Area.
+    Defines the general targets at the top level of the hierarchy.
     """
     # target_id is automatically created as 'id' by Django's AutoField
-    kra = models.ForeignKey(
-        KeyResultArea,
-        on_delete=models.CASCADE, # Changed to CASCADE to allow KRA deletion to cascade to KPIs
-        related_name='performance_targets'
-    )
     target_description = models.TextField(
         help_text="The specific target description (e.g., 'Recruit 40 new members')."
     )
@@ -200,7 +203,7 @@ class PerformanceTarget(models.Model):
         verbose_name_plural = "Performance Targets"
 
     def __str__(self):
-        return f"Target for {self.kra.kra_name}: {self.target_description}"
+        return self.target_description
 
 
 class EmployeePerformance(models.Model):
@@ -213,10 +216,12 @@ class EmployeePerformance(models.Model):
         on_delete=models.CASCADE, # If a user is deleted, their performance records are also deleted
         related_name='performance_records'
     )
-    performance_target = models.ForeignKey(
-        PerformanceTarget,
-        on_delete=models.PROTECT, # Prevent deletion of target if performance records exist
-        related_name='employee_performances'
+    kra = models.ForeignKey(
+        KeyResultArea,
+        on_delete=models.PROTECT, # Prevent deletion of KRA if performance records exist
+        related_name='employee_performances',
+        null=True,
+        blank=True
     )
     # Using CharField for period for flexibility (e.g., "Jan-Jun 2024").
     # For more complex period tracking, consider a separate `AppraisalPeriod` model.
@@ -250,19 +255,20 @@ class EmployeePerformance(models.Model):
     class Meta:
         verbose_name = "Employee Performance"
         verbose_name_plural = "Employee Performances"
-        unique_together = ('user', 'performance_target', 'period_under_review')
+        unique_together = ('user', 'kra', 'period_under_review')
 
     def __str__(self):
-        return f"{self.user.username}'s performance for {self.performance_target.kra.kra_name} ({self.period_under_review})"
+        return f"{self.user.username}'s performance for {self.kra.kra_name} ({self.period_under_review})"
 
     def save(self, *args, **kwargs):
         # Calculate percentage_achieved and weighted_average before saving
-        if self.performance_target.target_value is not None and self.performance_target.target_value != 0:
-            self.percentage_achieved = (self.actual_achievement / self.performance_target.target_value)
+        performance_target = self.kra.pillar.performance_target
+        if performance_target.target_value is not None and performance_target.target_value != 0:
+            self.percentage_achieved = (self.actual_achievement / performance_target.target_value)
         else:
             self.percentage_achieved = 0.0 # Handle division by zero
 
-        self.weighted_average = self.percentage_achieved * self.performance_target.weight
+        self.weighted_average = self.percentage_achieved * performance_target.weight
 
         super().save(*args, **kwargs)
 
