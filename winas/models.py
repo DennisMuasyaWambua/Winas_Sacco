@@ -176,6 +176,45 @@ class KeyResultArea(models.Model):
         return f"{self.kra_name} ({self.pillar.pillar_name})"
 
 
+class KPI(models.Model):
+    """
+    Defines specific Key Performance Indicators (KPIs) under each Key Result Area (KRA).
+    """
+    # kpi_id is automatically created as 'id' by Django's AutoField
+    kra = models.ForeignKey(
+        KeyResultArea,
+        on_delete=models.CASCADE,
+        related_name='kpis'
+    )
+    kpi_name = models.CharField(max_length=255)
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Detailed description of the KPI and how it's measured."
+    )
+    target_value = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="The numerical target figure for this specific KPI."
+    )
+    annual_target = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="The annual target for this KPI."
+    )
+    weight = models.IntegerField(
+        help_text="The weight assigned to this KPI within its KRA."
+    )
+
+    class Meta:
+        verbose_name = "Key Performance Indicator"
+        verbose_name_plural = "Key Performance Indicators"
+        unique_together = ('kra', 'kpi_name')
+
+    def __str__(self):
+        return f"{self.kpi_name} ({self.kra.kra_name})"
+
+
 class PerformanceTarget(models.Model):
     """
     Defines the general targets at the top level of the hierarchy.
@@ -208,7 +247,7 @@ class PerformanceTarget(models.Model):
 
 class EmployeePerformance(models.Model):
     """
-    Records an employee's actual performance against specific strategic targets for a given period.
+    Records an employee's actual performance against specific KPIs for a given period.
     """
     # performance_id is automatically created as 'id' by Django's AutoField
     user = models.ForeignKey(
@@ -216,9 +255,9 @@ class EmployeePerformance(models.Model):
         on_delete=models.CASCADE, # If a user is deleted, their performance records are also deleted
         related_name='performance_records'
     )
-    kra = models.ForeignKey(
-        KeyResultArea,
-        on_delete=models.PROTECT, # Prevent deletion of KRA if performance records exist
+    kpi = models.ForeignKey(
+        KPI,
+        on_delete=models.PROTECT, # Prevent deletion of KPI if performance records exist
         related_name='employee_performances',
         null=True,
         blank=True
@@ -255,20 +294,19 @@ class EmployeePerformance(models.Model):
     class Meta:
         verbose_name = "Employee Performance"
         verbose_name_plural = "Employee Performances"
-        unique_together = ('user', 'kra', 'period_under_review')
+        unique_together = ('user', 'kpi', 'period_under_review')
 
     def __str__(self):
-        return f"{self.user.username}'s performance for {self.kra.kra_name} ({self.period_under_review})"
+        return f"{self.user.username}'s performance for {self.kpi.kpi_name} ({self.period_under_review})"
 
     def save(self, *args, **kwargs):
         # Calculate percentage_achieved and weighted_average before saving
-        performance_target = self.kra.pillar.performance_target
-        if performance_target.target_value is not None and performance_target.target_value != 0:
-            self.percentage_achieved = (self.actual_achievement / performance_target.target_value)
+        if self.kpi.target_value is not None and self.kpi.target_value != 0:
+            self.percentage_achieved = (self.actual_achievement / self.kpi.target_value)
         else:
             self.percentage_achieved = 0.0 # Handle division by zero
 
-        self.weighted_average = self.percentage_achieved * performance_target.weight
+        self.weighted_average = self.percentage_achieved * self.kpi.weight
 
         super().save(*args, **kwargs)
 
@@ -283,11 +321,13 @@ class SoftSkillRating(models.Model):
         on_delete=models.CASCADE,
         related_name='soft_skill_ratings'
     )
-    # The KRA here should be specific to soft skills (e.g., Diligence, Teamwork)
-    soft_skill_kra = models.ForeignKey(
-        KeyResultArea,
+    # The KPI here should be specific to soft skills (e.g., Diligence, Teamwork)
+    soft_skill_kpi = models.ForeignKey(
+        KPI,
         on_delete=models.PROTECT,
-        related_name='soft_skill_ratings'
+        related_name='soft_skill_ratings',
+        null=True,
+        blank=True
     )
     # Using CharField for period consistency with EmployeePerformance
     period_under_review = models.CharField(max_length=100, default="Annual") # Assuming soft skills are often annual
@@ -311,10 +351,10 @@ class SoftSkillRating(models.Model):
     class Meta:
         verbose_name = "Soft Skill Rating"
         verbose_name_plural = "Soft Skill Ratings"
-        unique_together = ('user', 'soft_skill_kra', 'period_under_review')
+        unique_together = ('user', 'soft_skill_kpi', 'period_under_review')
 
     def __str__(self):
-        return f"{self.user.username}'s {self.soft_skill_kra.kra_name} rating ({self.period_under_review})"
+        return f"{self.user.username}'s {self.soft_skill_kpi.kpi_name} rating ({self.period_under_review})"
 
     def save(self, *args, **kwargs):
         # Assuming rating is on a scale that can be multiplied by weight directly or needs conversion
