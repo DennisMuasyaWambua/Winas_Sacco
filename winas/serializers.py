@@ -9,7 +9,7 @@ from django.conf import settings
 from .utils import send_password_email
 
 from .models import (
-    Department, Role, User, Pillar, KeyResultArea, PerformanceTarget,
+    Department, Role, User, Metrics, Pillar, KeyResultArea, PerformanceTarget,
     EmployeePerformance, SoftSkillRating, OverallAppraisal, Training,
     DevelopmentPlan, RatingKey
 )
@@ -25,6 +25,16 @@ class RoleSerializer(serializers.ModelSerializer):
     class Meta:
         model = Role
         fields = '__all__'
+
+class MetricsSerializer(serializers.ModelSerializer):
+    pillars_count = serializers.SerializerMethodField()
+    
+    class Meta:
+        model = Metrics
+        fields = '__all__'
+    
+    def get_pillars_count(self, obj):
+        return obj.pillars.count()
 
 class UserSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.department_name', read_only=True)
@@ -50,6 +60,9 @@ class UserSerializer(serializers.ModelSerializer):
 # Ensure they correctly handle user foreign keys.
 
 class PillarSerializer(serializers.ModelSerializer):
+    metrics_name = serializers.CharField(source='metrics.metrics_name', read_only=True)
+    performance_target_description = serializers.CharField(source='performance_target.target_description', read_only=True)
+    
     class Meta:
         model = Pillar
         fields = '__all__'

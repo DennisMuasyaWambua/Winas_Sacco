@@ -4,6 +4,7 @@ from .views import (
     DepartmentListCreate, DepartmentDetail,
     RoleListCreate, RoleDetail,
     UserManagementListCreate, UserManagementDetail, # Changed from UserListCreate, UserDetail
+    MetricsListCreate, MetricsDetail,
     PillarListCreate, PillarDetail,
     KeyResultAreaListCreate, KeyResultAreaDetail,
     PerformanceTargetListCreate, PerformanceTargetDetail,
@@ -36,6 +37,9 @@ urlpatterns = [
 
     path('roles/', RoleListCreate.as_view(), name='role-list-create'),
     path('roles/<int:pk>/', RoleDetail.as_view(), name='role-detail'),
+
+    path('metrics/', MetricsListCreate.as_view(), name='metrics-list-create'),
+    path('metrics/<int:pk>/', MetricsDetail.as_view(), name='metrics-detail'),
 
     path('pillars/', PillarListCreate.as_view(), name='pillar-list-create'),
     path('pillars/<int:pk>/', PillarDetail.as_view(), name='pillar-detail'),

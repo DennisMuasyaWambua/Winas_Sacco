@@ -128,11 +128,43 @@ class User(AbstractUser): # Extending AbstractUser for authentication features
         return self.email # Or self.get_full_name() if you prefer
 
 
+class Metrics(models.Model):
+    """
+    Defines the top-level metrics categories that group performance pillars.
+    """
+    # metrics_id is automatically created as 'id' by Django's AutoField
+    metrics_name = models.CharField(max_length=255, unique=True)
+    description = models.TextField(
+        null=True,
+        blank=True,
+        help_text="Detailed description of the metrics category."
+    )
+    weight = models.IntegerField(
+        null=True,
+        blank=True,
+        help_text="The weight assigned to this metrics category."
+    )
+
+    class Meta:
+        verbose_name = "Metrics"
+        verbose_name_plural = "Metrics"
+
+    def __str__(self):
+        return self.metrics_name
+
+
 class Pillar(models.Model):
     """
     Defines the broad categories of performance (e.g., Shared Performance Areas, Soft Skills).
     """
     # pillar_id is automatically created as 'id' by Django's AutoField
+    metrics = models.ForeignKey(
+        Metrics,
+        on_delete=models.CASCADE,
+        related_name='pillars',
+        null=True,
+        blank=True
+    )
     performance_target = models.ForeignKey(
         'PerformanceTarget',
         on_delete=models.CASCADE,
@@ -144,10 +176,10 @@ class Pillar(models.Model):
 
     class Meta:
         verbose_name_plural = "Pillars"
-        unique_together = ('performance_target', 'pillar_name')
+        unique_together = ('metrics', 'pillar_name')
 
     def __str__(self):
-        return f"{self.pillar_name} ({self.performance_target})"
+        return f"{self.pillar_name} ({self.metrics})"
 
 
 class KeyResultArea(models.Model):

@@ -12,12 +12,12 @@ from decimal import Decimal
 from django.contrib.auth import authenticate, login # Import login for session auth if needed
 
 from .models import (
-    Department, Role, User, Pillar, KeyResultArea, PerformanceTarget,
+    Department, Role, User, Metrics, Pillar, KeyResultArea, PerformanceTarget,
     EmployeePerformance, SoftSkillRating, OverallAppraisal, Training,
     DevelopmentPlan, RatingKey
 )
 from .serializers import (
-    DepartmentSerializer, RoleSerializer, UserSerializer, PillarSerializer,
+    DepartmentSerializer, RoleSerializer, UserSerializer, MetricsSerializer, PillarSerializer,
     KeyResultAreaSerializer, PerformanceTargetSerializer, EmployeePerformanceSerializer,
     SoftSkillRatingSerializer, OverallAppraisalSerializer, TrainingSerializer,
     DevelopmentPlanSerializer, RatingKeySerializer, BonusCalculationSerializer,
@@ -343,6 +343,30 @@ class RoleDetail(RetrieveUpdateDestroyAPIView):
     queryset = Role.objects.all()
     serializer_class = RoleSerializer
     permission_classes = [IsAdminOrCEO]
+
+class MetricsListCreate(ListCreateAPIView):
+    queryset = Metrics.objects.all().prefetch_related('pillars')
+    serializer_class = MetricsSerializer
+    permission_classes = [IsSupervisorOrAdmin]
+
+class MetricsDetail(RetrieveUpdateDestroyAPIView):
+    queryset = Metrics.objects.all().prefetch_related('pillars')
+    serializer_class = MetricsSerializer
+    permission_classes = [IsSupervisorOrAdmin]
+    
+    def delete(self, request, pk, *args, **kwargs):
+        try:
+            obj = self.get_object(pk)
+            # Check if there are any pillars referencing this metrics
+            if obj.pillars.exists():
+                return Response(
+                    {"error": "Cannot delete this Metrics because it has associated Pillars. Delete or reassign the pillars first."},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            obj.delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class PillarListCreate(ListCreateAPIView):
     queryset = Pillar.objects.all()
