@@ -252,6 +252,14 @@ class PerformanceTarget(models.Model):
     Defines the general targets at the top level of the hierarchy.
     """
     # target_id is automatically created as 'id' by Django's AutoField
+    kra = models.ForeignKey(
+        KeyResultArea,
+        on_delete=models.CASCADE,
+        related_name='performance_targets',
+        null=True,
+        blank=True,
+        help_text="The Key Result Area this performance target belongs to."
+    )
     target_description = models.TextField(
         help_text="The specific target description (e.g., 'Recruit 40 new members')."
     )
@@ -279,7 +287,7 @@ class PerformanceTarget(models.Model):
 
 class EmployeePerformance(models.Model):
     """
-    Records an employee's actual performance against specific KPIs for a given period.
+    Records an employee's actual performance against specific performance targets for a given period.
     """
     # performance_id is automatically created as 'id' by Django's AutoField
     user = models.ForeignKey(
@@ -290,6 +298,13 @@ class EmployeePerformance(models.Model):
     kpi = models.ForeignKey(
         KPI,
         on_delete=models.PROTECT, # Prevent deletion of KPI if performance records exist
+        related_name='employee_performances',
+        null=True,
+        blank=True
+    )
+    performance_target = models.ForeignKey(
+        PerformanceTarget,
+        on_delete=models.PROTECT, # Prevent deletion of performance target if performance records exist
         related_name='employee_performances',
         null=True,
         blank=True
@@ -329,16 +344,16 @@ class EmployeePerformance(models.Model):
         unique_together = ('user', 'kpi', 'period_under_review')
 
     def __str__(self):
-        return f"{self.user.username}'s performance for {self.kpi.kpi_name} ({self.period_under_review})"
+        return f"{self.user.username}'s performance for {self.performance_target.target_description} ({self.period_under_review})"
 
     def save(self, *args, **kwargs):
         # Calculate percentage_achieved and weighted_average before saving
-        if self.kpi.target_value is not None and self.kpi.target_value != 0:
-            self.percentage_achieved = (self.actual_achievement / self.kpi.target_value)
+        if self.performance_target.target_value is not None and self.performance_target.target_value != 0:
+            self.percentage_achieved = (self.actual_achievement / self.performance_target.target_value)
         else:
             self.percentage_achieved = 0.0 # Handle division by zero
 
-        self.weighted_average = self.percentage_achieved * self.kpi.weight
+        self.weighted_average = self.percentage_achieved * self.performance_target.weight
 
         super().save(*args, **kwargs)
 
@@ -356,6 +371,14 @@ class SoftSkillRating(models.Model):
     # The KPI here should be specific to soft skills (e.g., Diligence, Teamwork)
     soft_skill_kpi = models.ForeignKey(
         KPI,
+        on_delete=models.PROTECT,
+        related_name='soft_skill_ratings',
+        null=True,
+        blank=True
+    )
+    # The KRA here should be specific to soft skills (e.g., Diligence, Teamwork)
+    soft_skill_kra = models.ForeignKey(
+        KeyResultArea,
         on_delete=models.PROTECT,
         related_name='soft_skill_ratings',
         null=True,
@@ -386,7 +409,7 @@ class SoftSkillRating(models.Model):
         unique_together = ('user', 'soft_skill_kpi', 'period_under_review')
 
     def __str__(self):
-        return f"{self.user.username}'s {self.soft_skill_kpi.kpi_name} rating ({self.period_under_review})"
+        return f"{self.user.username}'s {self.soft_skill_kra.kra_name} rating ({self.period_under_review})"
 
     def save(self, *args, **kwargs):
         # Assuming rating is on a scale that can be multiplied by weight directly or needs conversion
