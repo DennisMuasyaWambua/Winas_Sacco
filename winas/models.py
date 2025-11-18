@@ -263,12 +263,16 @@ class PerformanceTarget(models.Model):
     target_description = models.TextField(
         help_text="The specific target description (e.g., 'Recruit 40 new members')."
     )
-    target_value = models.IntegerField(
+    target_value = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
         null=True,
         blank=True,
-        help_text="The numerical target figure (e.g., 40, 80000000)."
+        help_text="The numerical target figure (e.g., 40.5, 80000000.00, 98.75)."
     )
-    annual_target = models.IntegerField(
+    annual_target = models.DecimalField(
+        max_digits=15,
+        decimal_places=2,
         null=True,
         blank=True,
         help_text="The annual target, which might differ from the primary target_value."
