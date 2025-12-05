@@ -31,7 +31,7 @@ class MetricsSerializer(serializers.ModelSerializer):
     
     class Meta:
         model = Metrics
-        fields = '__all__'
+        fields = ['id', 'metrics_name', 'description', 'pillars_count']
     
     def get_pillars_count(self, obj):
         return obj.pillars.count()

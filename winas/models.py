@@ -139,11 +139,6 @@ class Metrics(models.Model):
         blank=True,
         help_text="Detailed description of the metrics category."
     )
-    weight = models.IntegerField(
-        null=True,
-        blank=True,
-        help_text="The weight assigned to this metrics category."
-    )
 
     class Meta:
         verbose_name = "Metrics"
